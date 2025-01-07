@@ -4,7 +4,7 @@ const repl = require('node:repl');
 const express = require('express');
 const app = express();
 
-let person =[
+let persons =[
     [
         { 
           "id": 1,
@@ -30,9 +30,19 @@ let person =[
 ]
 
 app.get('/api/persons', (request, response)=>{
-    response.json(person);
+    response.json(persons);
 
 })
+
+
+app.get('/info', (request, response) =>{
+    const currentTime = new Date();
+    const numberOfEntries = persons.length;
+    response.send(`
+        <p>Phonebook has info for ${numberOfEntries} people</p>
+        <p>${currentTime}</p>`)
+
+});
   const PORT = 3001
   app.listen(PORT)
   console.log(`Server running on port ${PORT}`)

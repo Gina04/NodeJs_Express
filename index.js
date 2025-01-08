@@ -1,10 +1,13 @@
 const http = require('http');
 const repl = require('node:repl');
+var morgan = require('morgan')
 
 const express = require('express');
 const app = express();
 
+
 app.use(express.json());
+app.use(morgan('tiny'));
 
 let persons =[
         { 
@@ -87,6 +90,15 @@ app.post('/api/persons', (request, response) =>{
   response.json(person)
 
 })
+// Crear un token personalizado para registrar el cuerpo de las solicitudes POST
+morgan.token('body', (req, res) => {
+  // Verificar si la solicitud tiene un cuerpo y es JSON
+  return req.method === 'POST' ? JSON.stringify(req.body) : '';
+});
+// Configurar Morgan con el formato 'tiny' y el token 'body'
+app.use(
+  morgan(':method :url :status :res[content-length] - :response-time ms :body')
+)
 
   const PORT = 3001
   app.listen(PORT)

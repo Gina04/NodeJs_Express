@@ -1,6 +1,7 @@
 const http = require('http');
 const repl = require('node:repl');
-var morgan = require('morgan')
+var morgan = require('morgan');
+const cors = require('cors');
 
 const express = require('express');
 const app = express();
@@ -13,6 +14,7 @@ morgan.token('body', (req, res) => {
   
 });
 
+app.use(cors());// Habilitar CORS para todas las solicitudes
 // Configurar Morgan con el formato 'tiny' y el token 'body'
 app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms :body')
@@ -108,6 +110,6 @@ app.post('/api/persons', (request, response) =>{
 })
 
 
-  const PORT = 3001
+  const PORT = 3002
   app.listen(PORT)
   console.log(`Server running on port ${PORT}`)

@@ -26,6 +26,15 @@ app.use(express.json());
 app.use(morgan('tiny'));
 app.use(express.static('dist'))
 
+app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; font-src 'self' https://fonts.googleapis.com; style-src 'self' https://fonts.googleapis.com 'unsafe-inline';"
+  );
+  next();
+});
+
+
 let persons =[
         { 
           id: 1,

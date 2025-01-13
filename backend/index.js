@@ -23,8 +23,8 @@ app.use(
 
 // Middleware para procesar JSON
 app.use(express.json());
-
 app.use(morgan('tiny'));
+app.use(express.static('dist'))
 
 let persons =[
         { 
@@ -110,6 +110,6 @@ app.post('/api/persons', (request, response) =>{
 })
 
 
-  const PORT = 3002
+  const PORT =process.env.PORT || 3002
   app.listen(PORT)
   console.log(`Server running on port ${PORT}`)

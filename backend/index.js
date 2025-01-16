@@ -1,12 +1,25 @@
 const http = require('http');
+const mongoose = require('mongoose');
 const repl = require('node:repl');
 var morgan = require('morgan');
 const cors = require('cors');
-
+require('dotenv').config()
 const express = require('express');
+const Person = require('./models/person')
+
+const url = process.env.MONGODB_URI
+console.log('connecting to', url);
+
+mongoose.connect(url)
+  .then(result =>{
+    console.log('connected to MongoDB')
+  })
+  .catch(error =>{
+    console.log('error connecting to MongoDB:', error.message);
+  })
+
+
 const app = express();
-
-
 // Crear un token personalizado para registrar el cuerpo de las solicitudes POST
 morgan.token('body', (req, res) => {
   // Verificar si la solicitud tiene un cuerpo y es JSON
@@ -58,9 +71,13 @@ let persons =[
         }
 ]
 
-app.get('/api/persons', (request, response)=>{
-    response.json(persons);
 
+
+app.get('/api/persons', (request, response)=>{
+  Person.find({}).then(persons =>{
+    response.json(persons);
+  })  
+  
 })
 
 

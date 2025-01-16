@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const repl = require('node:repl');
 var morgan = require('morgan');
 const cors = require('cors');
-require('dotenv').config()
+require('dotenv').config();
 const express = require('express');
 const Person = require('./models/person')
 
@@ -48,7 +48,7 @@ app.use((req, res, next) => {
 });
 
 
-let persons =[
+/*let persons =[
         { 
           id: 1,
           name: "Arto Hellas", 
@@ -70,7 +70,7 @@ let persons =[
           number: "39-23-6423122"
         }
 ]
-
+*/
 
 
 app.get('/api/persons', (request, response)=>{
@@ -164,3 +164,5 @@ app.post('/api/persons', (request, response) => {
   const PORT =process.env.PORT || 3002
   app.listen(PORT)
   console.log(`Server running on port ${PORT}`)
+
+  

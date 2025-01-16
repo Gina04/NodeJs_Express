@@ -5,7 +5,7 @@ var morgan = require('morgan');
 const cors = require('cors');
 require('dotenv').config();
 const express = require('express');
-const Person = require('./models/person')
+const Person = require('./models/person');
 
 const url = process.env.MONGODB_URI
 console.log('connecting to', url);

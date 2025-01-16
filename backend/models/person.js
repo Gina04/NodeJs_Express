@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-const password = process.argv[2];
+/*const password = process.env.MONGODB_URI;*/
+//process.argv[2];
 
 /* DO NOT SAVE YOUR PASSWORD TO GITHUB!!*/
-const url =
-  `mongodb+srv://fullstack:${password}@cluster0.eugas.mongodb.net/personApp?retryWrites=true&w=majority&appName=Cluster0`
+const url = process.env.MONGODB_URI
+  //`mongodb+srv://fullstack:${password}@cluster0.eugas.mongodb.net/personApp?retryWrites=true&w=majority&appName=Cluster0`
 
 mongoose.set('strictQuery',false)
 mongoose.connect(url)

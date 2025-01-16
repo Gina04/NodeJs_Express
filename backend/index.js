@@ -90,7 +90,13 @@ app.get('/info', (request, response) =>{
 
 });
 
-app.get('/api/persons/:id',(request, response)=>{
+app.get('/api/perons/:id',(request,response)=>{
+  Person.findById(request.params.id).then(person =>{
+    response.json(person);
+  })
+})
+
+/*app.get('/api/persons/:id',(request, response)=>{
   const id = Number(request.params.id)
   console.log(id)
   const person = persons.find(person =>person.id === id) 
@@ -101,7 +107,7 @@ app.get('/api/persons/:id',(request, response)=>{
   }else{
     response.status(404).end()
   }  
-})
+})*/
 
 app.delete('/api/persons/:id', (request, response)=>{
   const id= Number(request.params.id);
@@ -116,8 +122,8 @@ const generateId = () =>{
   return maxId + 1;
 }
 
-app.post('/api/persons', (request, response) =>{
-  console.log('Body received in POST:', request.body); // Depuración
+/*app.post('/api/persons', (request, response) =>{
+
   const body = request.body;
   if(!body.name || !body.number || persons.find(person => person.name === body.name)){
   
@@ -133,7 +139,26 @@ app.post('/api/persons', (request, response) =>{
   persons = persons.concat(person)
   response.json(person)
 
-})
+})*/
+
+app.post('/api/persons', (request, response) => {
+  const { name, number } = request.body;
+
+  if (!name || !number) {
+    return response.status(400).json({ error: 'name or number missing' });
+  }
+
+  const person = new Person({
+    name,
+    number,
+  });
+
+  person.save().then(savedPerson => {
+    response.json(savedPerson);
+  }).catch(error => {
+    response.status(500).json({ error: 'saving person failed' });
+  });
+});
 
 
   const PORT =process.env.PORT || 3002

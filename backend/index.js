@@ -7,6 +7,9 @@ require('dotenv').config();
 const express = require('express');
 const Person = require('./models/person');
 
+const app = express();
+
+// Configuración de conexión a MongoDB
 const url = process.env.MONGODB_URI
 console.log('connecting to', url);
 
@@ -19,8 +22,10 @@ mongoose.connect(url)
   })
 
 
-const app = express();
-// Crear un token personalizado para registrar el cuerpo de las solicitudes POST
+
+
+// Middlewares
+
 morgan.token('body', (req, res) => {
   // Verificar si la solicitud tiene un cuerpo y es JSON
   return req.method === 'POST' ? JSON.stringify(req.body) : '';
@@ -47,6 +52,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// Definición de rutas
 
 /*let persons =[
         { 
@@ -90,7 +96,7 @@ app.get('/info', (request, response) =>{
 
 });
 
-app.get('/api/perons/:id',(request,response, next)=>{
+app.get('/api/persons/:id',(request,response, next)=>{
   Person.findById(request.params.id).then(person =>{
     if(person){
       response.json(person)
@@ -170,6 +176,22 @@ app.post('/api/persons', (request, response) => {
   });
 });
 
+// Middleware para manejo de errores
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
+
+// Este debe ser el último middleware cargado
+app.use(errorHandler);
+
+// Middleware para manejar rutas no encontradas
 
   const PORT =process.env.PORT || 3002
   app.listen(PORT)

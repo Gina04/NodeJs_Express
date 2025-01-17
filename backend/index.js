@@ -176,6 +176,30 @@ app.post('/api/persons', (request, response) => {
   });
 });
 
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body;
+
+  // Definir los campos a actualizar
+  const person = {
+    number: body.number,  // Aseguramos que el número se pueda actualizar
+  };
+
+  // Buscar a la persona por su ID y actualizar el número
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPerson => {
+      if (updatedPerson) {
+        // Si se encontró la persona y se actualizó correctamente
+        response.json(updatedPerson);
+      } else {
+        // Si no se encuentra la persona con ese ID
+        response.status(404).json({ error: 'Persona no encontrada' });
+      }
+    })
+    .catch(error => next(error));
+});
+
+
+
 // Middleware para manejo de errores
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)

@@ -37,5 +37,15 @@ const update = (id, newObject) =>{
     const request = axios.put(`${baseUrl}/${id}`, newObject)
     return request.then(response => response.data)
 }
+// Nueva función para manejar la lógica de crear o actualizar
+const addOrUpdate = (newObject, persons) => {
+  const existingPerson = persons.find(person => person.name === newObject.name);
+
+  if (existingPerson) {
+    return update(existingPerson.id, { ...existingPerson, number: newObject.number });
+  } else {
+    return create(newObject);
+  }
+};
         
-export default{create, getAll, remove, update};
+export default{create, getAll, remove, update,addOrUpdate};

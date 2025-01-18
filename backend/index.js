@@ -173,7 +173,12 @@ app.post('/api/persons', (request, response, next) => {
     response.json(savedPerson);
   }).catch(error => {
     //response.status(500).json({ error: 'saving person failed' });
-    next(error);
+    if(error.name === 'ValidationError'){
+      response.status(400).json({error: error.message});
+    }else{
+      next(error);
+    }
+    
   });
 });
 

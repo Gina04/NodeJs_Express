@@ -157,7 +157,7 @@ const generateId = () =>{
 
 })*/
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const { name, number } = request.body;
 
   if (!name || !number) {
@@ -172,20 +172,15 @@ app.post('/api/persons', (request, response) => {
   person.save().then(savedPerson => {
     response.json(savedPerson);
   }).catch(error => {
-    response.status(500).json({ error: 'saving person failed' });
+    //response.status(500).json({ error: 'saving person failed' });
+    next(error);
   });
 });
 
 app.put('/api/persons/:id', (request, response, next) => {
-  const body = request.body;
-
-  // Definir los campos a actualizar
-  const person = {
-    number: body.number,  // Aseguramos que el número se pueda actualizar
-  };
-
+  const {number} = request.body;
   // Buscar a la persona por su ID y actualizar el número
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person.findByIdAndUpdate(request.params.id, {number}, { new: true, runValidators: true, context: 'query'})
     .then(updatedPerson => {
       if (updatedPerson) {
         // Si se encontró la persona y se actualizó correctamente
@@ -206,7 +201,9 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
-  } 
+  } else if(error.name === 'ValidationError'){
+    return response.status(400).json({error:error.message});
+  }
 
   next(error)
 }

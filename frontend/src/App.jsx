@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import PersonList from "./components/PersonList";
 import PersonForm from "./components/PersonForm";
 import FilterNamePerson from "./components/FilterNamePerson";
-import noteService from "./services/phones";
+import personService from "./services/phones";
 import Notification from "./components/Notification";
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
   };
 
   useEffect(() => {
-    noteService
+    personService
       .getAll()
       .then((initialPersons) => {
         setPersons(initialPersons);
@@ -32,12 +32,14 @@ function App() {
       });
   }, []);
 
+
   const addPhoneBook = (event) => {
     event.preventDefault();
-    // Verificar si el nombre ya existe
-    const nameExist = persons.find((person) => person.name === newName);
-
+    //Crear el objeto de persona 
     const nameBookObjetc = {name: newName,number: newPhone};
+
+     // Verificar si el nombre ya existe
+     const nameExist = persons.find((person) => person.name === newName);
 
     if (nameExist) {
       if (
@@ -45,7 +47,7 @@ function App() {
           `${newName} is already added to phonebook, replace the old number with a new one?`
         )
       ) {
-        noteService.update(nameExist.id, nameBookObjetc).then((updatePhone) => {
+        personService.update(nameExist.id, nameBookObjetc).then((updatePhone) => {
           setNewPhone(
             persons.map((p) => (p.id !== nameExist.id ? p : updatePhone))
           ); //Actualizamos el estado de los Phone of the person
@@ -54,15 +56,16 @@ function App() {
           showNotification(`Added '${newName}'`, "success");
         })
           .catch((error) => {
-            showNotification(`Failed to update ${newName}. It might have been deleted`, "error");
+            // Aqui manejamos el error especifico de validacion de Mongoose
+              showNotification(error, "error");
+            
           });
-        ;
       }
       return; //Detener la ejecucion si ya existe
     }
 
     // Si no existe, crea uno nuevo
-    noteService
+    personService
       .create(nameBookObjetc)
       .then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson)); // Añadimos la nueva persona al estado.
@@ -71,7 +74,8 @@ function App() {
         showNotification(`Added ${newName}`, "success");
       })
       .catch((error) => {
-        showNotification(`Failed to add ${newName}`, "error");
+        // Aquí capturamos el error de Mongoose y mostramos el mensaje en la UI
+        showNotification(error, "error");
       });
 
     setTimeout(() => {
@@ -96,7 +100,7 @@ function App() {
     const person = persons.find((p) => p.id === id);
 
     if (window.confirm(`Do you really want to delete ${person.name}?`)) {
-      noteService.remove(id).then(() => {
+      personService.remove(id).then(() => {
         setPersons(persons.filter((p) => p.id !== id));
         showNotification(`Deleted ${person.name}`, "success")
       })

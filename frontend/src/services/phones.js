@@ -25,6 +25,14 @@ const getAll = () => {
 const create = newObject => {
     const request = axios.post(baseUrl, newObject)
         return request.then(response => response.data)
+        .catch(error =>{
+          //captura y devuelve el mensaje de error de Mongoose
+          if(error.response && error.response.data && error.response.data.error){
+            return Promise.reject(error.response.data.error); //Pasamos el mensaje de error
+          }else{
+            return Promise.reject('An unexpected error ocurred');
+          }
+        })
 }
 
 // Nueva función para eliminar un recurso
